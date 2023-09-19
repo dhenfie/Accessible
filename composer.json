@@ -1,0 +1,25 @@
+{
+  "name": "dhenfie/accessible",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Dhenfie\\Accessible\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "dhenfie",
+      "email": "fajarsusilo1600@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  }
+}
