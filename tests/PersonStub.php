@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-class Person
+class PersonStub
 {
     private string $name;
     private string $age;
@@ -23,7 +23,13 @@ class Person
         return $this->age;
     }
 
-    public function getMessage(string $message): string {
-        return $message. ' '. $this->name;
+    private function getPerson(array $person, string $message): string
+    {
+        return implode(' ', $person).' '.$message;
+    }
+
+    public function getMessage(string $message): string
+    {
+        return $message.' '.$this->name;
     }
 }
