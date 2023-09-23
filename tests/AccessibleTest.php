@@ -6,44 +6,45 @@ use BadMethodCallException;
 use Dhenfie\Accessible\Accessible;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionMethod;
 
 class AccessibleTest extends TestCase
 {
 
-    public Accessible $accessible;
-    private Person $person;
-
-    protected function setUp(): void
+    public function test_inspect()
     {
-        $this->person = new Person('Fajar Susilo', 23);
-        $this->accessible = new Accessible($this->person);
+        $inspect = Accessible::inspect(new PersonStub('Taylor', 23));
+        self::assertInstanceOf(Accessible::class, $inspect);
     }
 
     public function test_inspector()
     {
-        $reflection = new ReflectionClass($this->accessible);
-        $method = $reflection->getMethod('inspector');
-        $method->invoke($this->accessible);
-        $inspector = $reflection->getProperty('reflectionMethod')->getValue($this->accessible);
+        $accessible = Accessible::inspect(new PersonStub('Taylor', 23));
+        $inspect = new ReflectionClass($accessible);
+        $inspectorMethod = $inspect->getMethod('inspector');
 
-        self::assertCount(2, $inspector);
+        self::assertFalse($inspectorMethod->invoke($accessible, 'getMessage'), 'Return must false if public method');
+        self::assertInstanceOf(ReflectionMethod::class, $inspectorMethod->invoke($accessible, 'getName'),
+            'Return must instance of ReflectionMethod if private method');
+
     }
 
-    public function test_invoke_magic_method(){
-        self::assertEquals('Fajar Susilo', $this->accessible->getName('sss'));
-        self::assertEquals(23, $this->accessible->getAge());
+    public function test_invoke_magic_method()
+    {
+        $person = new PersonStub('Taylor Otwell', 23);
+        self::assertEquals('Taylor Otwell', Accessible::inspect($person)->getName());
+        self::assertEquals('Taylor Otwell Hay', Accessible::inspect($person)->getPerson(['Taylor', 'Otwell'], 'Hay'));
     }
 
-    public function test_allow(){
-       self::assertEquals('Fajar Susilo',  Accessible::allow($this->person)->getName());
-    }
-
-    public function test_call_public_method(){
-        self::assertEquals('Hello Fajar Susilo', Accessible::allow($this->person)->getMessage('Hello'));
-    }
-
-    public function test_call_undefined_method(){
+    public function test_call_public_method()
+    {
         self::expectException(BadMethodCallException::class);
-        Accessible::allow($this->person)->undefined();
+        Accessible::inspect(new PersonStub('taylor', 23))->getMessage('Hello');
+    }
+
+    public function test_call_undefined_method()
+    {
+        self::expectException(BadMethodCallException::class);
+        Accessible::inspect(new PersonStub('taylor', 23))->undefined();
     }
 }

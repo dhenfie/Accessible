@@ -7,74 +7,70 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 
-final class Accessible
+class Accessible
 {
 
     /**
-     * List of available methods
-     * @var ReflectionMethod[]
-     */
-    private array $reflectionMethod;
-
-    /**
-     * ReflectionClass instance
+     * Instance of ReflectionClass
      * @var ReflectionClass
      */
     private ReflectionClass $reflectionClass;
 
     /**
-     * Object target
+     * Target Object
      * @var object
      */
     private object $instanceObject;
 
     /**
-     * Create the instance `Accessible`
+     * Create Accessible object
      * @param  object  $instanceObject
      */
     public function __construct(object $instanceObject)
     {
         $this->instanceObject = $instanceObject;
-        $this->reflectionClass = new ReflectionClass($instanceObject);
-        $this->inspector();
+        $this->reflectionClass = new ReflectionClass($this->instanceObject);
     }
 
     /**
-     * Inspect object
-     * @return void
+     * Inspected the target object and return instance of ReflectionMethod
+     * @param  string  $method
+     * @return ReflectionMethod|bool
      */
-    private function inspector(): void
+    private function inspector(string $method): ReflectionMethod|bool
     {
-        if ($methods = $this->reflectionClass->getMethods(ReflectionMethod::IS_PRIVATE | ReflectionMethod::IS_PROTECTED)) {
-            foreach ($methods as $method) {
-                $this->reflectionMethod[$method->name] = $method;
+        try {
+            $reflectionMethod = $this->reflectionClass->getMethod($method);
+            if (!$reflectionMethod->isPublic()) {
+                return $reflectionMethod;
             }
+            // prevent public method a invoked
+            return false;
+        } catch (ReflectionException $exception) {
+            // Method not found
+            return false;
         }
     }
 
     /**
+     * Call private or protected method on target object
      * @throws ReflectionException
-     * @throws BadMethodCallException
      */
-    public function __call(string $name, array $arguments): mixed
+    public function __call(string $name, array $arguments)
     {
-        if (array_key_exists($name, $this->reflectionMethod)) {
-            return $this->reflectionMethod[$name]->invoke($this->instanceObject, $arguments);
-        } else {
-            if (method_exists($this->instanceObject, $name)) {
-                return call_user_func_array([$this->instanceObject, $name], $arguments);
-            } else {
-                throw new BadMethodCallException(sprintf('Call undefined method %s()', $name));
-            }
+        $args = $arguments;
+        if ($inspector = $this->inspector($name)) {
+            return $inspector->invokeArgs($this->instanceObject, $arguments);
         }
+        throw new BadMethodCallException('Method not found');
     }
 
     /**
-     * Create the instance `Accessible`
+     * Inspect target object and return Accessible instance
      * @param  object  $object
      * @return self
      */
-    public static function allow(object $object): self
+    public static function inspect(object $object): self
     {
         return (new self($object));
     }
