@@ -58,11 +58,10 @@ class Accessible
      */
     public function __call(string $name, array $arguments)
     {
-        $args = $arguments;
         if ($inspector = $this->inspector($name)) {
             return $inspector->invokeArgs($this->instanceObject, $arguments);
         }
-        throw new BadMethodCallException('Method not found');
+        throw new BadMethodCallException('Method not found or method is public');
     }
 
     /**
