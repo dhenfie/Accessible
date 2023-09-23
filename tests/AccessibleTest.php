@@ -30,7 +30,7 @@ class AccessibleTest extends TestCase
     }
 
     public function test_invoke_magic_method(){
-        self::assertEquals('Fajar Susilo', $this->accessible->getName());
+        self::assertEquals('Fajar Susilo', $this->accessible->getName('sss'));
         self::assertEquals(23, $this->accessible->getAge());
     }
 
@@ -45,14 +45,5 @@ class AccessibleTest extends TestCase
     public function test_call_undefined_method(){
         self::expectException(BadMethodCallException::class);
         Accessible::allow($this->person)->undefined();
-    }
-
-    public function test_getMethod(){
-        self::assertCount(2, Accessible::allow($this->person)->getMethod());
-    }
-
-    public function test_getMethods()
-    {
-        self::assertCount(4, Accessible::allow($this->person)->getMethods());
     }
 }

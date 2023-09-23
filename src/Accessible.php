@@ -78,22 +78,4 @@ final class Accessible
     {
         return (new self($object));
     }
-
-    /**
-     * Return all private and protected method
-     * @return ReflectionMethod[]
-     */
-    public function getMethod(): array
-    {
-        return $this->reflectionMethod;
-    }
-
-    /**
-     * Return all method
-     * @return ReflectionMethod[]
-     */
-    public function getMethods(): array
-    {
-        return $this->reflectionClass->getMethods();
-    }
 }
