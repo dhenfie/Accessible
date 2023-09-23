@@ -8,17 +8,19 @@ composer require dhenfie/accessible
 ```
 
 ### Usage
-Use the static method `allow` from the `Accessible` class to introspect a target object, and afterward, you can call private methods as you would normally.
+Use the static method `inspect()` from the `Accessible` class to introspect a target object, and afterward, you can call private methods as you would normally.
 
+#### **Example**
 ```php
-$inspect = \Dhenfie\Accessible\Accessible::allow(new Person());
+<?php
+require 'vendor/autoload.php';
 
-// call method private setName() in object Person
+$person = new Person();
+$inspect = \Dhenfie\Accessible\Accessible::inspect($person);
+
+// call private method setName() in object Person
 $inspect->setName('Tailor Otwell');
-```
 
-Or call it directly instead of storing it in a variable first.
-
-```php
-\Dhenfie\Accessible\Accessible::allow(new Person)->setName();
+// call public method getName() in object person
+echo  $person->getName(); // Taylor Otwell
 ```
