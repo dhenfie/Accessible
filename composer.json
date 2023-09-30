@@ -19,6 +19,9 @@
     }
   ],
   "minimum-stability": "stable",
+  "require": {
+    "php": "^8.0"
+  },
   "require-dev": {
     "phpunit/phpunit": "*"
   }
