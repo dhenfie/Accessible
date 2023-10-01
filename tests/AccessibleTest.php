@@ -21,11 +21,10 @@ class AccessibleTest extends TestCase
     {
         $accessible = Accessible::inspect(new PersonStub('Taylor', 23));
         $inspect = new ReflectionClass($accessible);
-        $inspectorMethod = $inspect->getMethod('inspector');
+        $inspectorMethod = $inspect->getMethod('inspectorMethod');
 
-        self::assertFalse($inspectorMethod->invoke($accessible, 'getMessage'), 'Return must false if public method');
-        self::assertInstanceOf(ReflectionMethod::class, $inspectorMethod->invoke($accessible, 'getName'),
-            'Return must instance of ReflectionMethod if private method');
+        self::assertNull($inspectorMethod->invoke($accessible, 'getMessage'));
+        self::assertInstanceOf(ReflectionMethod::class, $inspectorMethod->invoke($accessible, 'getName'),);
 
     }
 
@@ -38,8 +37,8 @@ class AccessibleTest extends TestCase
 
     public function test_call_public_method()
     {
-        self::expectException(BadMethodCallException::class);
-        Accessible::inspect(new PersonStub('taylor', 23))->getMessage('Hello');
+        $actual = Accessible::inspect(new PersonStub('taylor', 23))->getMessage('Hello');
+        self::assertEquals('The getMessage() is a public method and you can call it as normally', $actual);
     }
 
     public function test_call_undefined_method()
