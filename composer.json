@@ -5,7 +5,8 @@
   "autoload": {
     "psr-4": {
       "Dhenfie\\Accessible\\": "src/"
-    }
+    },
+    "files": ["src/Helper.php"]
   },
   "autoload-dev": {
     "psr-4": {

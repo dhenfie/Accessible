@@ -7,6 +7,7 @@ use Dhenfie\Accessible\Accessible;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
+use function Dhenfie\Accessible\accessible;
 
 class AccessibleTest extends TestCase
 {
@@ -45,5 +46,28 @@ class AccessibleTest extends TestCase
     {
         self::expectException(BadMethodCallException::class);
         Accessible::inspect(new PersonStub('taylor', 23))->undefined();
+    }
+
+    public function test_helper(){
+        self::assertInstanceOf(Accessible::class, accessible(new class{}));
+    }
+
+    public function test_helper_accessible(){
+        self::assertEquals('Taylor', accessible(new PersonStub('Taylor', 23))->getName());
+    }
+
+    public function test_get_value_property(){
+        $person = new PersonStub('Fajar Susilo', 23);
+        self::assertEquals('Fajar Susilo', accessible($person)->name);
+    }
+    public function test_set_value_property(){
+
+        $person = new PersonStub('Fajar Susilo', 23);
+
+        self::assertEquals(23, accessible($person)->age);
+
+        accessible($person)->age = 17;
+
+        self::assertEquals(17, accessible($person)->age);
     }
 }
